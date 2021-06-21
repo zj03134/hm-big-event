@@ -66,3 +66,51 @@ $('form').on('submit', function (e) {
         }
     })
 })
+
+
+// 获取地址栏的id，这个id是文章的id；
+var id = location.search.substr(4);
+// console.log(id);
+
+
+// -------------------------- 获取分类，渲染到下拉框的位置 --------
+$.ajax({
+    type: 'POST',
+    url: '/my/article/update',
+    success: function (res) {
+        let arr = [];
+        res.data.forEach(item => {
+            arr.push(`<option value="${item.id}">${item.name}</option>`);
+        })
+        // $('#category').append(str);
+        $('select[name=cate_id]').append(arr.join(''));
+        // 更新渲染
+        // form.render('select', 'lay-filter属性值');
+        form.render('select');
+        // 下拉框的分类渲染完成，然后再去发送ajax请求，获取文章详情
+        // 根据id可以获取文章详情（标题、内容、状态、图片.....）全部获取到
+        $.ajax({
+            // url: '/my/article/:id', // 把 :id 换成真实的id即可
+            url: '/my/article/' + id,
+            success: function (res) {
+                // console.log(res);
+                // 获取到详情后，做数据回填 (使用layui提供的 form.val())
+                form.val('article', res.data);
+                // 一定先做数据回填，然后在把 textarea 换成 富文本编辑器
+                initEditor();
+                // 更换图片(销毁剪裁区 --> 更换图片 --> 重建剪裁区)
+                $image
+                    .cropper('destroy')
+                    .attr('src', baseUrl + '/' + res.data.cover_img)
+                    .cropper(options);
+            }
+        });
+    }
+});
+var options = {
+    // 宽高比
+    aspectRatio: 400 / 280,
+    autoCropArea: 1, // 让剪裁框铺满整个剪裁区
+    // 设置预览区的选择器
+    preview: '.img-preview'
+};

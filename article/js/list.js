@@ -28,7 +28,9 @@ function renderArticle() {
               <td>${item.pub_date}</td>
               <td>${item.state}</td>
               <td>
-                <button type="button" class="layui-btn layui-btn-xs">编辑</button>
+                <button type="button" class="layui-btn layui-btn-xs">
+                <a href="http://127.0.0.1:5500/article/edit.html?id=${item.id}">编辑</a>
+                </button>
                 <button data-id="${item.id}" type="button" class="layui-btn layui-btn-xs layui-btn-danger">删除</button>
               </td>
             </tr>
